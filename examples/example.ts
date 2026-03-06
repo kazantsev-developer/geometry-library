@@ -9,8 +9,8 @@ async function run(): Promise<void> {
     console.log(`фигура "${shape.name}" обновлена`);
   });
 
-  const circle = new Circle(10, 'круг для дома');
-  const rectangle = new Rectangle(5, 12, 'рабочий стол');
+  const circle = new Circle(9, 'кольцо для девушки');
+  const rectangle = new Rectangle(40, 60, 'прикроватный столик');
   const triangle = new Triangle(3, 4, 5, 'египетский треугольник');
 
   manager.addShape(circle);
@@ -20,7 +20,7 @@ async function run(): Promise<void> {
   console.log('добавлено 3 фигуры');
 
   // console.log('меняем радиус круга');
-  // circle.radius = 25;
+  // circle.radius = 10;
 
   try {
     await unlink('examples/report.txt');
