@@ -1,15 +1,25 @@
-/**
- * Абстрактный класс для геометрических фигур
- * Наследует EventTarget для поддержки событийной модели
- *
- * @emits update - когда изменяются параметры фигуры (имя, размеры)
- * @emits destroy - когда фигура помечена на удаление
- */
+export interface ShapeData {
+  id: string;
+  type: string;
+  name: string;
+  area: number;
+  perimeter: number;
+  [key: string]: unknown;
+}
 
+export interface ShapeUpdateEventDetail {
+  target: Shape;
+  timestamp: number;
+}
+
+/**
+ * базовый класс для всех фигур
+ * генерирует событие update при изменении состояния
+ */
 export abstract class Shape extends EventTarget {
-  readonly id!: string;
-  readonly type!: string;
-  private _name!: string;
+  public readonly id: string;
+  public readonly type: string;
+  private _name: string;
 
   constructor(type: string, name?: string) {
     super();
@@ -18,23 +28,33 @@ export abstract class Shape extends EventTarget {
     this._name = name || `${type}_${this.id.slice(0, 4)}`;
   }
 
-  get name(): string {
+  public get name(): string {
     return this._name;
   }
 
-  set name(value: string) {
+  public set name(value: string) {
     this._name = value;
-    this._emitUpdate();
+    this.emitUpdate();
   }
 
-  protected _emitUpdate(): void {
-    this.dispatchEvent(new CustomEvent('update', { detail: this }));
+  public abstract getArea(): number;
+  public abstract getPerimeter(): number;
+  public abstract getFormattedDetails(): string;
+  public abstract toJSON(): ShapeData;
+
+  protected emitUpdate(): void {
+    const detail: ShapeUpdateEventDetail = {
+      target: this,
+      timestamp: Date.now(),
+    };
+    this.dispatchEvent(new CustomEvent('update', { detail }));
   }
 
-  abstract getArea(): number;
-  abstract toJSON(): Record<string, unknown>;
-
-  destroy(): void {
-    this.dispatchEvent(new CustomEvent('destroy', { detail: { id: this.id } }));
+  protected validatePositive(value: number, fieldName: string): void {
+    if (value <= 0) {
+      throw new Error(
+        `[${this.constructor.name}] ${fieldName} must be positive: ${value}`,
+      );
+    }
   }
 }
