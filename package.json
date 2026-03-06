@@ -20,7 +20,7 @@
     "oop",
     "event-target"
   ],
-  "author": "Your Name",
+  "author": "Kazantsev Aleksandr",
   "license": "ISC",
   "devDependencies": {
     "@types/jest": "^29.5.0",
