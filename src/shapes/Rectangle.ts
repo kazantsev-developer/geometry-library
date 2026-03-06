@@ -1,46 +1,63 @@
-import { Shape } from '../core/Shape';
+import { Shape, ShapeData } from '../core/Shape';
 
+export interface RectangleData extends ShapeData {
+  width: number;
+  height: number;
+}
+
+/**
+ * класс для работы с прямоугольником
+ */
 export class Rectangle extends Shape {
   private _width: number;
   private _height: number;
 
   constructor(width: number, height: number, name?: string) {
     super('rectangle', name);
-    this._validatePositive(width, 'Width');
-    this._validatePositive(height, 'Height');
+    this.validatePositive(width, 'Width');
+    this.validatePositive(height, 'Height');
     this._width = width;
     this._height = height;
   }
 
-  get width(): number {
+  public get width(): number {
     return this._width;
   }
 
-  set width(value: number) {
-    this._validatePositive(value, 'Width');
+  public set width(value: number) {
+    this.validatePositive(value, 'Width');
     this._width = value;
-    this._emitUpdate();
+    this.emitUpdate();
   }
 
-  get height(): number {
+  public get height(): number {
     return this._height;
   }
 
-  set height(value: number) {
-    this._validatePositive(value, 'Height');
+  public set height(value: number) {
+    this.validatePositive(value, 'Height');
     this._height = value;
-    this._emitUpdate();
+    this.emitUpdate();
   }
 
-  getArea(): number {
+  public override getArea(): number {
     return this._width * this._height;
   }
 
-  getPerimeter(): number {
+  public override getPerimeter(): number {
     return 2 * (this._width + this._height);
   }
 
-  toJSON(): Record<string, unknown> {
+  public override getFormattedDetails(): string {
+    return [
+      `ширина: ${this._width}`,
+      `высота: ${this._height}`,
+      `площадь: ${this.getArea()}`,
+      `периметр: ${this.getPerimeter()}`,
+    ].join('\n');
+  }
+
+  public override toJSON(): RectangleData {
     return {
       id: this.id,
       type: this.type,
@@ -50,11 +67,5 @@ export class Rectangle extends Shape {
       area: this.getArea(),
       perimeter: this.getPerimeter(),
     };
-  }
-
-  private _validatePositive(value: number, field: string): void {
-    if (value <= 0) {
-      throw new Error(`${field} must be positive, got ${value}`);
-    }
   }
 }

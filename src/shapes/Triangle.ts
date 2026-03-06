@@ -1,58 +1,56 @@
-import { Shape } from "../core/Shape";
+import { Shape, ShapeData } from '../core/Shape';
 
+export interface TriangleData extends ShapeData {
+  sides: [number, number, number];
+}
+
+/**
+ * реализация треугольника по трем сторонам
+ */
 export class Triangle extends Shape {
   private _a: number;
   private _b: number;
   private _c: number;
 
   constructor(a: number, b: number, c: number, name?: string) {
-    super("triangle", name);
-    this._validatePositive(a, "Side a");
-    this._validatePositive(b, "Side b");
-    this._validatePositive(c, "Side c");
-    this._validateTriangleExists(a, b, c);
+    super('triangle', name);
+    this.validateSides(a, b, c);
     this._a = a;
     this._b = b;
     this._c = c;
   }
 
-  get sides(): [number, number, number] {
+  public get sides(): [number, number, number] {
     return [this._a, this._b, this._c];
   }
 
-  get a(): number {
-    return this._a;
-  }
-
-  get b(): number {
-    return this._b;
-  }
-
-  get c(): number {
-    return this._c;
-  }
-
-  setSides(a: number, b: number, c: number): void {
-    this._validatePositive(a, "Side a");
-    this._validatePositive(b, "Side b");
-    this._validatePositive(c, "Side c");
-    this._validateTriangleExists(a, b, c);
+  public setSides(a: number, b: number, c: number): void {
+    this.validateSides(a, b, c);
     this._a = a;
     this._b = b;
     this._c = c;
-    this._emitUpdate();
+    this.emitUpdate();
   }
 
-  getArea(): number {
+  /** вычисление площади по формуле Герона */
+  public override getArea(): number {
     const s = (this._a + this._b + this._c) / 2;
     return Math.sqrt(s * (s - this._a) * (s - this._b) * (s - this._c));
   }
 
-  getPerimeter(): number {
+  public override getPerimeter(): number {
     return this._a + this._b + this._c;
   }
 
-  toJSON(): Record<string, unknown> {
+  public override getFormattedDetails(): string {
+    return [
+      `Стороны: a=${this._a}, b=${this._b}, c=${this._c}`,
+      `Периметр: ${this.getPerimeter()}`,
+      `Площадь: ${this.getArea().toFixed(2)}`,
+    ].join('\n');
+  }
+
+  public override toJSON(): TriangleData {
     return {
       id: this.id,
       type: this.type,
@@ -63,16 +61,15 @@ export class Triangle extends Shape {
     };
   }
 
-  private _validatePositive(value: number, field: string): void {
-    if (value <= 0) {
-      throw new Error(`${field} must be positive, got ${value}`);
-    }
-  }
+  /** проверка существования треугольника и положительных значений */
+  private validateSides(a: number, b: number, c: number): void {
+    this.validatePositive(a, 'Side A');
+    this.validatePositive(b, 'Side B');
+    this.validatePositive(c, 'Side C');
 
-  private _validateTriangleExists(a: number, b: number, c: number): void {
     if (a + b <= c || a + c <= b || b + c <= a) {
       throw new Error(
-        `Invalid triangle: ${a}, ${b}, ${c} do not satisfy triangle inequality`,
+        `[Triangle] Sides ${a}, ${b}, ${c} do not satisfy triangle inequality.`,
       );
     }
   }

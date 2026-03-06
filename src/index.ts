@@ -1,7 +1,5 @@
-export { Shape } from "./core/Shape";
-
-export { Rectangle } from "./shapes/Rectangle";
-export { Circle } from "./shapes/Circle";
-export { Triangle } from "./shapes/Triangle";
-
-export { ShapeManager } from "./managers/ShapeManager";
+export * from './core/Shape';
+export * from './shapes/Circle';
+export * from './shapes/Rectangle';
+export * from './shapes/Triangle';
+export * from './managers/ShapeManager';

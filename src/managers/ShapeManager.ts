@@ -1,60 +1,89 @@
-import { Shape } from "../core/Shape";
+import { Shape } from '../core/Shape';
+import { promises as fs } from 'fs';
 
+export interface ShapeEventDetail {
+  shape: Shape;
+  timestamp: number;
+}
+
+/**
+ * менеджер для управления коллекциями фигур
+ * реализует паттерн observer для отслеживания изменений в фигурах
+ */
 export class ShapeManager extends EventTarget {
-  private _shapes: Map<string, Shape> = new Map();
+  private readonly _shapes: Map<string, Shape> = new Map();
 
-  addShape(shape: Shape): void {
+  /** регистрация фигуры и настройка проброса событий */
+  public addShape(shape: Shape): void {
+    if (this._shapes.has(shape.id)) return;
+
     this._shapes.set(shape.id, shape);
 
-    shape.addEventListener("update", () => {
-      this.dispatchEvent(new CustomEvent("shape-updated", { detail: shape }));
+    shape.addEventListener('update', () => {
+      this.dispatchEvent(new CustomEvent('shape-updated', { detail: shape }));
     });
 
-    this.dispatchEvent(new CustomEvent("shape-added", { detail: shape }));
+    this.emitEvent('shape-added', shape);
   }
 
-  removeShape(id: string): boolean {
+  public removeShape(id: string): boolean {
+    const shape = this._shapes.get(id);
+    if (!shape) return false;
+
     const deleted = this._shapes.delete(id);
-
-    if (deleted) {
-      this.dispatchEvent(new CustomEvent("shape-removed", { detail: { id } }));
-    }
-
+    if (deleted) this.emitEvent('shape-removed', shape);
     return deleted;
   }
 
-  getShape(id: string): Shape | undefined {
-    return this._shapes.get(id);
-  }
-
-  getAllShapes(): Shape[] {
+  public getAllShapes(): Shape[] {
     return Array.from(this._shapes.values());
   }
 
-  getByTypes<T extends Shape>(type: string): T[] {
-    return this.getAllShapes().filter((s) => s.type === type) as T[];
-  }
+  /** асинхронная генерация текстового отчета */
+  public async saveReport(filePath: string): Promise<void> {
+    const shapes = this.getAllShapes();
+    let reportData: string[] = [];
 
-  clear(): void {
-    this._shapes.clear();
-    this.dispatchEvent(new CustomEvent("shapes-cleared"));
-  }
+    try {
+      const existing = await fs.readFile(filePath, 'utf-8');
+      if (existing.trim()) {
+        reportData = existing.trim().split('\n');
+        if (reportData[reportData.length - 1] !== '') reportData.push('');
+      }
+    } catch {
+      reportData = [
+        '# Отчет',
+        `дата формирования: ${new Date().toLocaleString()}`,
+        '='.repeat(40),
+        '',
+      ];
+    }
 
-  get count(): number {
-    return this._shapes.size;
-  }
+    const existingCount = reportData.filter((line) =>
+      line.match(/^\d+\./),
+    ).length;
 
-  async saveToFile(filename: string): Promise<void> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const data = JSON.stringify(
-          this.getAllShapes().map((s) => s.toJSON()),
-          null,
-          2,
-        );
-        console.log(`Saving to ${filename}:`, data);
-        resolve();
-      }, 1000);
+    shapes.forEach((shape, index) => {
+      const typeLabels: Record<string, string> = {
+        rectangle: 'прямоугольник',
+        circle: 'круг',
+        triangle: 'треугольник',
+      };
+
+      const typeName = typeLabels[shape.type] || 'фигура';
+      const shapeNumber = existingCount + index + 1;
+
+      reportData.push(`${shapeNumber}. [${typeName}] "${shape.name}"`);
+      reportData.push('-'.repeat(20));
+      reportData.push(shape.getFormattedDetails());
+      reportData.push('-'.repeat(40), '');
     });
+
+    await fs.writeFile(filePath, reportData.join('\n'), 'utf-8');
+  }
+
+  private emitEvent(type: string, shape: Shape): void {
+    const detail: ShapeEventDetail = { shape, timestamp: Date.now() };
+    this.dispatchEvent(new CustomEvent(type, { detail }));
   }
 }
