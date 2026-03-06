@@ -1,7 +1,13 @@
 import { ShapeManager, Circle, Rectangle, Triangle } from '../src';
+import { unlink } from 'fs/promises';
 
 async function run(): Promise<void> {
   const manager = new ShapeManager();
+
+  manager.addEventListener('shape-updated', (event) => {
+    const shape = (event as CustomEvent).detail;
+    console.log(`фигура "${shape.name}" обновлена`);
+  });
 
   const circle = new Circle(10, 'круг для дома');
   const rectangle = new Rectangle(5, 12, 'рабочий стол');
@@ -11,22 +17,19 @@ async function run(): Promise<void> {
   manager.addShape(rectangle);
   manager.addShape(triangle);
 
-  manager.addEventListener('shape-updated', (event) => {
-    const shape = (event as CustomEvent).detail;
-    console.log(`состояние фигуры "${shape.name}" обновлено.`);
-  });
+  console.log('добавлено 3 фигуры');
 
-  circle.radius = 25;
+  // console.log('меняем радиус круга');
+  // circle.radius = 25;
 
   try {
-    await manager.saveReport('examples/report.txt');
-    console.log('отчет успешно сформирован: examples/report.txt');
-  } catch (error) {
-    console.error(`не удалось сохранить отчет: ${(error as Error).message}`);
-  }
+    await unlink('examples/report.txt');
+  } catch {}
+
+  await manager.saveReport('examples/report.txt');
+  console.log('отчет сохранен');
 }
 
 run().catch((err) => {
-  console.error('Fatal execution error:', err);
-  process.exit(1);
+  console.error('Ошибка:', err.message);
 });
