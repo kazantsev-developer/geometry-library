@@ -7,14 +7,12 @@
     "sourceMap": true,
     "outDir": "./dist",
     "rootDir": "./src",
-
     "strict": true,
     "allowJs": false,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-
     "moduleResolution": "node",
     "esModuleInterop": true,
     "skipLibCheck": true,
