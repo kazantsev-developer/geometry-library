@@ -1,4 +1,4 @@
-import { ShapeManager, Circle, Rectangle, Triangle } from '../src';
+import { ShapeManager, Circle, Rectangle, Triangle } from '../dist';
 import { unlink } from 'fs/promises';
 
 async function run(): Promise<void> {
