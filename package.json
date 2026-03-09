@@ -10,9 +10,12 @@
   ],
   "scripts": {
     "build": "rimraf dist && tsc",
+    "build:addon": "node-gyp rebuild",
     "example": "ts-node examples/example.ts",
+    "example:addon": "ts-node examples/addon-example.ts",
     "test": "jest",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "clean": "rimraf dist build Release"
   },
   "keywords": [
     "typescript",
@@ -34,5 +37,8 @@
   "jest": {
     "preset": "ts-jest",
     "testEnvironment": "node"
+  },
+  "dependencies": {
+    "node-addon-api": "^8.6.0"
   }
 }

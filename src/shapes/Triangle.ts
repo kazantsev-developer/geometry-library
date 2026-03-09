@@ -1,4 +1,5 @@
 import { Shape, ShapeData } from '../core/Shape';
+import { validateTriangle } from '../addons';
 
 export interface TriangleData extends ShapeData {
   sides: [number, number, number];
@@ -61,13 +62,13 @@ export class Triangle extends Shape {
     };
   }
 
-  /** проверка существования треугольника и положительных значений */
+  /** проверка сторон через C++ аддон */
   private validateSides(a: number, b: number, c: number): void {
     this.validatePositive(a, 'Side A');
     this.validatePositive(b, 'Side B');
     this.validatePositive(c, 'Side C');
 
-    if (a + b <= c || a + c <= b || b + c <= a) {
+    if (!validateTriangle(a, b, c)) {
       throw new Error(
         `[Triangle] Sides ${a}, ${b}, ${c} do not satisfy triangle inequality.`,
       );
