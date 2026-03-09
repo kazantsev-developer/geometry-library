@@ -19,8 +19,8 @@ async function run(): Promise<void> {
 
   console.log('добавлено 3 фигуры');
 
-  // console.log('меняем радиус круга');
-  // circle.radius = 10;
+  console.log('меняем радиус круга');
+  circle.radius = 10;
 
   try {
     await unlink('examples/report.txt');
