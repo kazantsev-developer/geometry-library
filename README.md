@@ -1,33 +1,41 @@
 # Geometry Library
 
-Библиотека для работы с плоскими геометрическими фигурами (2D) на TypeScript
+A comprehensive 2D geometry library built with TypeScript, featuring a high-performance native C++ addon.
 
-## Особенности
+## Features
 
-- **Событийная модель**: базовый класс на основе нативного `EventTarget` для уведомления об изменениях состояния фигур.
-- **Строгая типизация**: полная поддержка TypeScript в `strict` режиме.
-- **Масштабируемость**: архитектура спроектирована по принципу open/closed — новые типы фигур (трапеции, многоугольники) добавляются без изменения ядра системы.
-- **Интерфейс**: методы расчета площади, периметра и встроенная валидация параметров.
-- **Экспорт данных**: асинхронная генерация текстовых отчетов
-- **Нативный C++ аддон**: валидация через C++ для повышения производительности (треугольник)
+* **Event-Driven Architecture:** Core system extends native `EventTarget` to provide automated notifications upon shape state changes.
+* **Strict Typing:** Out-of-the-box support for TypeScript configured in strict mode.
+* **Extensibility:** Built in accordance with the Open/Closed Principle; new geometric shapes (e.g., trapezoids, polygons) can be introduced without modifying the core system.
+* **Standard Geometric Interfaces:** Native methods for calculating area, perimeter, and robust parameter validation.
+* **Data Export:** Built-in asynchronous generation for textual reports.
+* **Native C++ Addon:** Offloads triangle parameter validation to C++ for maximized computational performance.
 
-## Быстрый старт
+## Quick Start
 
-пример использования библиотеки в файле `examples/example.ts`
+A complete usage demonstration is available in `examples/example.ts`.
 
-## Команды
+### Available Commands
 
-- `npm install` — установка зависимостей
-- `npm run build:addon` — компиляция C++ аддона (перед первым запуском)
-- `npm run build` — компиляция TypeScript
-- `npm run example` — запуск демонстрации
-- `npm run example:addon` — демо работы C++ аддона
+```bash
+# Install project dependencies
+npm install
 
-## C++ аддон
+# Compile the native C++ addon (required before first run)
+npm run build:addon
 
-Библиотека включает нативный аддон для валидации треугольников.
-При создании треугольника проверка сторон выполняется через C++ код,
-что ускоряет выполнение при большом количестве операций.
+# Compile TypeScript source code
+npm run build
 
-Если аддон не скомпилирован или отсутствует, библиотека автоматически
-использует JavaScript реализацию (fallback)
+# Execute the main TypeScript demonstration
+npm run example
+
+# Execute the native C++ addon demonstration
+npm run example:addon
+```
+
+## C++ Addon
+
+The library includes a native addon engineered specifically for triangle validation workflows. When initializing a triangle, side verification is processed via the C++ layer, significantly increasing execution speed during high-volume operations.
+
+**Note:** If the C++ addon is missing or uncompiled, the library automatically activates a JavaScript implementation fallback to ensure uninterrupted execution.
