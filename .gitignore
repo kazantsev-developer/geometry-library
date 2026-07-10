@@ -1,8 +1,37 @@
-node_modules/
-dist/
+# Binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+geometry
+
+# Output of the go coverage tool
+*.out
+
+# Dependency directories (Go modules)
+vendor/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
 .DS_Store
-build/
-Release/
-*.node
-*.o
-*.gyp_install
+Thumbs.db
+
+# Temporary files
+tmp/
+*.log
+*.pid
+
+# Compiled test binary
+*.test
+
+# Profiling output
+*.cpu
+*.mem
